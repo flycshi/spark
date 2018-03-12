@@ -70,13 +70,18 @@ object Row {
 /**
  * Represents one row of output from a relational operator.  Allows both generic access by ordinal,
  * which will incur boxing overhead for primitives, as well as native primitive access.
+  * 标识来自一个相关操作符的输出的一行。
+  * 允许通过序数进行通用访问, 这将导致基础类型, 以及基础类型访问的装箱操作。
  *
  * It is invalid to use the native primitive interface to retrieve a value that is null, instead a
  * user must check `isNullAt` before attempting to retrieve a value that might be null.
+  * 通过本地原生接口提取一个null值是无效的, 因此用户在尝试提取一个可能为null的值之前, 必须检查是否为null。
  *
  * To create a new Row, use `RowFactory.create()` in Java or `Row.apply()` in Scala.
+  * Java中使用`RowFactory.create()`, Scala中使用`Row.apply()` 来创建一个新的[[Row]]
  *
  * A [[Row]] object can be constructed by providing field values. Example:
+  * 一个[[Row]]对象可以通过提供字段的值来构建, 比如
  * {{{
  * import org.apache.spark.sql._
  *
@@ -89,6 +94,7 @@ object Row {
  * A value of a row can be accessed through both generic access by ordinal,
  * which will incur boxing overhead for primitives, as well as native primitive access.
  * An example of generic access by ordinal:
+  * 通过序数的一般访问的一个例子
  * {{{
  * import org.apache.spark.sql._
  *
@@ -104,6 +110,7 @@ object Row {
  * a value that is null, instead a user must check `isNullAt` before attempting to retrieve a
  * value that might be null.
  * An example of native primitive access:
+  * 原生访问的一个例子
  * {{{
  * // using the row from the previous example.
  * val firstValue = row.getInt(0)
@@ -113,6 +120,7 @@ object Row {
  * }}}
  *
  * In Scala, fields in a [[Row]] object can be extracted in a pattern match. Example:
+  * Scala中, 一个[[Row]]对象的字段可以通过模式匹配来提取, 比如:
  * {{{
  * import org.apache.spark.sql._
  *

@@ -72,17 +72,27 @@ private[sql] object Dataset {
  * A Dataset is a strongly typed collection of domain-specific objects that can be transformed
  * in parallel using functional or relational operations. Each Dataset also has an untyped view
  * called a `DataFrame`, which is a Dataset of [[Row]].
+  * {@code DataSet}是一个强类型的特定领域的对象的集合, 可以使用函数或相关操作进行并行的转换操作。
+  * 每个{@code DataSet}有一个无类型的视图{@code  DataFrame}, 是[[Row]]的数据集。
  *
  * Operations available on Datasets are divided into transformations and actions. Transformations
  * are the ones that produce new Datasets, and actions are the ones that trigger computation and
  * return results. Example transformations include map, filter, select, and aggregate (`groupBy`).
  * Example actions count, show, or writing data out to file systems.
+  * {@code DataSet}上的有效操作被分为{@code transformation}和{@code action}两类。
+  * {@code transformation}是那些可以产生新{@code DataSet}的操作, {@code action}是那些触发计算并返回结果的操作。
+  * {@code transformation}包括map, filter, select, and aggregate (`groupBy`)。
+  * {@code action}包括count, show, 或者写数据到文件系统中。
  *
  * Datasets are "lazy", i.e. computations are only triggered when an action is invoked. Internally,
  * a Dataset represents a logical plan that describes the computation required to produce the data.
  * When an action is invoked, Spark's query optimizer optimizes the logical plan and generates a
  * physical plan for efficient execution in a parallel and distributed manner. To explore the
  * logical plan as well as optimized physical plan, use the `explain` function.
+  * {@code Dataset}都是"lazy"(延迟执行), 比如计算只有当一个{@code action}被调用时才会触发。
+  * 内部的说法, {@code Dataset}表示了一个逻辑计划, 它描述了生成数据所需要的计算。
+  * 当一个{@code action}被调用时, spark的查询优化器会优化逻辑计划, 并产生一个物理计划, 用来在分布式方式下进行高效的并行执行。
+  * 可以通过{@code explain}函数来查看逻辑计划, 以及优化后的物理计划。
  *
  * To efficiently support domain-specific objects, an [[Encoder]] is required. The encoder maps
  * the domain specific type `T` to Spark's internal type system. For example, given a class `Person`
@@ -91,9 +101,15 @@ private[sql] object Dataset {
  * often has much lower memory footprint as well as are optimized for efficiency in data processing
  * (e.g. in a columnar format). To understand the internal binary representation for data, use the
  * `schema` function.
+  * 为了高效的支持特定域的对象, 需要一个编码器。
+  * 编码器会将特定域类型`T`映射成spark的内部类型系统。
+  * 比如, 一个类`Person`拥有两个字段, 字符串`name`, 整型`int`, 一个编码器用来告诉spark在运行时产生序列化器, 将`Person`序列化成一个二进制结构。
+  *二进制结构占用更少的内存, 并被优化过, 以便在数据处理时获得更高的效率(列存储格式)。
+  * 可以通过`schema`函数, 查看数据的内部二进制表示。
  *
  * There are typically two ways to create a Dataset. The most common way is by pointing Spark
  * to some files on storage systems, using the `read` function available on a `SparkSession`.
+  * 一般可以通过两种方式创建一个{@code Dataset}。最常用的方式是使用`SparkSession`的`read`函数, 将spark指向存储系统上的文件。
  * {{{
  *   val people = spark.read.parquet("...").as[Person]  // Scala
  *   Dataset<Person> people = spark.read().parquet("...").as(Encoders.bean(Person.class)); // Java
@@ -101,6 +117,8 @@ private[sql] object Dataset {
  *
  * Datasets can also be created through transformations available on existing Datasets. For example,
  * the following creates a new Dataset by applying a filter on the existing one:
+  * {@code Dataset}也可以通过在已经存在的{@code Dataset}上进行有效的{@code transformation}得到。
+  * 比如, 如下代码就是在存在的{@code Dataset}上应用一个`filter`来创建一个新的{@coce Dataset}。
  * {{{
  *   val names = people.map(_.name)  // in Scala; names is a Dataset[String]
  *   Dataset<String> names = people.map((Person p) -> p.name, Encoders.STRING));
@@ -109,16 +127,21 @@ private[sql] object Dataset {
  * Dataset operations can also be untyped, through various domain-specific-language (DSL)
  * functions defined in: Dataset (this class), [[Column]], and [[functions]]. These operations
  * are very similar to the operations available in the data frame abstraction in R or Python.
+  * 通过[[Dataset]](这个类), [[Column]], and [[functions]]中定义的多种DSL函数, {@code Dataset}操作也可以是`untyped`。
+  * 这些操作与R或者Python中抽象的data frame中的有效操作是类似的。
  *
  * To select a column from the Dataset, use `apply` method in Scala and `col` in Java.
+  * Scala中使用`apply`方法, Java中使用`col`方法, 从[[Dataset]]中选择一个列。
  * {{{
  *   val ageCol = people("age")  // in Scala
  *   Column ageCol = people.col("age"); // in Java
  * }}}
  *
  * Note that the [[Column]] type can also be manipulated through its various functions.
+  * [[Column]]类型也可以通过它自身的多中函数进行操作。
  * {{{
  *   // The following creates a new column that increases everybody's age by 10.
+  *  // 如下创建了一个新的[[Column]], 通过将每个人的年龄加10
  *   people("age") + 10  // in Scala
  *   people.col("age").plus(10);  // in Java
  * }}}
